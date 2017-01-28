@@ -5,7 +5,6 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
-// Update these with values suitable for your network.
 
 const char* ssid = "TRAILROADWAY";
 const char* password = "MALLETCAMERA";
@@ -19,7 +18,7 @@ char msg[50];
 int value = 0;
 
 void setup() {
-  pinMode(2, OUTPUT);     // Initialize the BUILTIN_LED pin as an output
+  pinMode(2, OUTPUT);     // this thing connects to RESET on a mainboard
   digitalWrite(2, HIGH);
   // Serial.begin(115200);
   setup_wifi();
@@ -52,9 +51,9 @@ void callback(char* topic, byte* payload, unsigned int length) {
   // Serial.print("Message arrived [");
   // Serial.print(topic);
   // Serial.print("] ");
-  for (int i = 0; i < length; i++) {
+  // for (int i = 0; i < length; i++) {
     // Serial.print((char)payload[i]);
-  }
+  // }
   // Serial.println();
 
   // Here's what we do if we recieve "rst"
@@ -81,7 +80,7 @@ void reconnect() {
   while (!client.connected()) {
     // Serial.print("Attempting MQTT connection...");
     // Attempt to connect
-    if (client.connect(ID, "rst202", "MALLETCAMERA")) {
+    if (client.connect(ID, "rst202", "MALLETCAMERA",ID,0,0,"3")) {
       // Serial.println("connected");
       // Once connected, publish an announcement...
       client.publish(ID, "0");
@@ -92,7 +91,7 @@ void reconnect() {
       // Serial.print(client.state());
       // Serial.println(" try again in 5 seconds");
       // Wait 5 seconds before retrying
-      delay(30000);
+      delay(5000);
     }
   }
 }
@@ -110,6 +109,6 @@ void loop() {
     snprintf (msg, 75, "1", value);
     // Serial.print("Publish message: ");
     // Serial.println(msg);
-    client.publish(ID, msg);
+    client.publish(ID, msg);  // poking 1 to tell we're up
   }
 }
