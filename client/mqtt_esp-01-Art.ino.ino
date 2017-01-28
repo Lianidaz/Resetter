@@ -6,10 +6,10 @@
 #include <PubSubClient.h>
 
 
-const char* ssid = "TRAILROADWAY";
-const char* password = "MALLETCAMERA";
-const char* mqtt_server = "10.0.1.5";
-const char* ID = "Art-11";
+const char ssid[] = "TRAILROADWAY";
+const char password[] = "MALLETCAMERA";
+const char mqtt_server[] = "10.0.1.5";
+const char ID[] = "Art-11";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -47,7 +47,7 @@ void setup_wifi() {
   // Serial.println(WiFi.localIP());
 }
 
-void callback(char* topic, byte* payload, unsigned int length) {
+void callback(char[] topic, byte payload[], unsigned int length) {
   // Serial.print("Message arrived [");
   // Serial.print(topic);
   // Serial.print("] ");
@@ -85,7 +85,9 @@ void reconnect() {
       // Once connected, publish an announcement...
       client.publish(ID, "0");
       // ... and resubscribe
+      char topic[] = "/rst" + ID;
       client.subscribe("/rst");
+      client.subscribe(topic)
     } else {
       // Serial.print("failed, rc=");
       // Serial.print(client.state());
