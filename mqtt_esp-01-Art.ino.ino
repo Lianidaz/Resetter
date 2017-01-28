@@ -57,7 +57,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
   Serial.println();
 
-  // Switch on the LED if an 1 was received as first character
+  // Here's what we do if we recieve "rst"
   if ((char)payload[0] == 'r' && (char)payload[1] == 's' && (char)payload[2] == 't') {
     Serial.println("RST recieved");
     snprintf (msg, 75, "2", value);
@@ -67,6 +67,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
     digitalWrite(2, LOW);
     delay(222);
     digitalWrite(2, HIGH);
+  // We get "rep" messare. Call back that we're alive
   } else if ((char)payload[0] == 'r' && (char)payload[1] == 'e' && (char)payload[2] == 'p') {
     snprintf (msg, 75, "1", value);
     Serial.print("Gor \"rep\", publish message: ");
