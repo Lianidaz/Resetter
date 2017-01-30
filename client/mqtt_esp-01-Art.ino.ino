@@ -20,7 +20,7 @@ int value = 0;
 void setup() {
   pinMode(2, OUTPUT);     // this thing connects to RESET on a mainboard
   digitalWrite(2, HIGH);
-  // Serial.begin(115200);
+  Serial.begin(115200);
   setup_wifi();
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
@@ -30,38 +30,38 @@ void setup_wifi() {
 
   delay(10);
   // We start by connecting to a WiFi network
-  // Serial.println();
-  // Serial.print("Connecting to ");
-  // Serial.println(ssid);
+  Serial.println();
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
 
   WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    // Serial.print(".");
+    Serial.print(".");
   }
 
-  // Serial.println("");
-  // Serial.println("WiFi connected");
-  // Serial.println("IP address: ");
-  // Serial.println(WiFi.localIP());
+  Serial.println("");
+  Serial.println("WiFi connected");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
 }
 
 void callback(char[] topic, byte payload[], unsigned int length) {
-  // Serial.print("Message arrived [");
-  // Serial.print(topic);
-  // Serial.print("] ");
-  // for (int i = 0; i < length; i++) {
-    // Serial.print((char)payload[i]);
-  // }
-  // Serial.println();
+  Serial.print("Message arrived [");
+  Serial.print(topic);
+  Serial.print("] ");
+  for (int i = 0; i < length; i++) {
+    Serial.print((char)payload[i]);
+  }
+  Serial.println();
 
   // Here's what we do if we recieve "rst"
   if ((char)payload[0] == 'r' && (char)payload[1] == 's' && (char)payload[2] == 't') {
-    // Serial.println("RST recieved");
+    Serial.println("RST recieved");
     snprintf (msg, 75, "2", value);
-    // Serial.print("Publish message: ");
-    // Serial.println(msg);
+    Serial.print("Publish message: ");
+    Serial.println(msg);
     client.publish(ID, msg);
     digitalWrite(2, LOW);
     delay(222);
@@ -69,8 +69,8 @@ void callback(char[] topic, byte payload[], unsigned int length) {
   // We get "rep" messare. Call back that we're alive
   } else if ((char)payload[0] == 'r' && (char)payload[1] == 'e' && (char)payload[2] == 'p') {
     snprintf (msg, 75, "1", value);
-    // Serial.print("Gor \"rep\", publish message: ");
-    // Serial.println(msg);
+    Serial.print("Gor \"rep\", publish message: ");
+    Serial.println(msg);
     client.publish(ID, msg);
   }
 }
@@ -78,10 +78,10 @@ void callback(char[] topic, byte payload[], unsigned int length) {
 void reconnect() {
   // Loop until we're reconnected
   while (!client.connected()) {
-    // Serial.print("Attempting MQTT connection...");
+    Serial.print("Attempting MQTT connection...");
     // Attempt to connect
     if (client.connect(ID, "rst202", "MALLETCAMERA",ID,0,0,"3")) {
-      // Serial.println("connected");
+      Serial.println("connected");
       // Once connected, publish an announcement...
       client.publish(ID, "0");
       // ... and resubscribe
@@ -89,9 +89,9 @@ void reconnect() {
       client.subscribe("/rst");
       client.subscribe(topic)
     } else {
-      // Serial.print("failed, rc=");
-      // Serial.print(client.state());
-      // Serial.println(" try again in 5 seconds");
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");
       // Wait 5 seconds before retrying
       delay(5000);
     }
@@ -109,8 +109,8 @@ void loop() {
     lastMsg = now;
     ++value;
     snprintf (msg, 75, "1", value);
-    // Serial.print("Publish message: ");
-    // Serial.println(msg);
+    Serial.print("Publish message: ");
+    Serial.println(msg);
     client.publish(ID, msg);  // poking 1 to tell we're up
   }
 }
