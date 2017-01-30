@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 /*
  Example of using a Stream object to store the message payload
 

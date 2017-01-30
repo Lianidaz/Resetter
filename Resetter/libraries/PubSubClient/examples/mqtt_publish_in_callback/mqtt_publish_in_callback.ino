@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 /*
  Publishing in the callback
 

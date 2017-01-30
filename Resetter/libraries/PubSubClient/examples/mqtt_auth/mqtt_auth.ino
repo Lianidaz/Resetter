@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 /*
  Basic MQTT example with Authentication
 

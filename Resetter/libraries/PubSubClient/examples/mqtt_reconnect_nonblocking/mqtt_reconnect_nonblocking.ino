@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 /*
  Reconnecting MQTT example - non-blocking
 
