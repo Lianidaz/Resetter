@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 /*
  Basic ESP8266 MQTT example
 

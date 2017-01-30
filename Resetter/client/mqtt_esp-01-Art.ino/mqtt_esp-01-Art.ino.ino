@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 /*
   Generic MQTT to ESP-01 resetter client
 */
@@ -9,7 +11,7 @@
 const char ssid[] = "TRAILROADWAY";
 const char password[] = "MALLETCAMERA";
 const char mqtt_server[] = "10.0.1.5";
-const char ID[] = "Art-11";
+const char ID[] = "Art-36";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -47,7 +49,7 @@ void setup_wifi() {
   Serial.println(WiFi.localIP());
 }
 
-void callback(char[] topic, byte payload[], unsigned int length) {
+void callback(char topic[], byte payload[], unsigned int length) {
   Serial.print("Message arrived [");
   Serial.print(topic);
   Serial.print("] ");
@@ -85,9 +87,19 @@ void reconnect() {
       // Once connected, publish an announcement...
       client.publish(ID, "0");
       // ... and resubscribe
-      char topic[] = "/rst" + ID;
+//      char Topic[50];
+      char top[] = "/rst/";
+      char Topic[50] = "/rst/";
+      Serial.println(top);
+      Serial.println(Topic);
+      for (int i=0; i<sizeof(ID); i++) {
+        Topic[sizeof(top)+i-1] = ID[i];
+      }
       client.subscribe("/rst");
-      client.subscribe(topic)
+      Serial.println("Sub to: ");
+      Serial.println(top);
+      client.subscribe(Topic);
+      Serial.println(Topic);
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
