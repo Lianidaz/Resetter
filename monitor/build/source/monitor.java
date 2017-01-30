@@ -27,6 +27,8 @@ Workstation[] pc = new Workstation[parkSize];
 float WIDTH = 40;
 float HEIGHT = 80;
 
+boolean edit = false;
+
 public void setup() {
   mqtt = new MQTTClient(this);
   mqtt.connect("mqtt://admin:Q!w2e3r4@10.0.1.5","monitor");
@@ -35,31 +37,22 @@ public void setup() {
   
   for (int i = 0 ; i < parkSize ; i++) {
     pc[i] = new Workstation(i);
-
-    JSONObject Pc = Pcs.getJSONObject(i);
-    Pc.getInt("id");
-    pc[i].name = Pc.getString("name");
-    pc[i].user = Pc.getString("user");
-    pc[i].i = Pc.getInt("i");
-    pc[i].j = Pc.getInt("j");
-    pc[i].exists = Pc.getBoolean("exists");
-    pc[i].lastonline[0] = Pc.getInt("lastOnlineY");
-    pc[i].lastonline[1] = Pc.getInt("lastOnlineM");
-    pc[i].lastonline[2] = Pc.getInt("lastOnlineD");
-    pc[i].lastonline[3] = Pc.getInt("lastOnlineh");
-    pc[i].lastonline[4] = Pc.getInt("lastOnlinem");
-    pc[i].lastonline[5] = Pc.getInt("lastOnlines");
-
+    pc[i].readJSON(i);
   }
 
 }
 
 public void draw() {
   background(100);
-  canvas();
+  translate(200,0);
+  // canvas();
   for (int i = 1 ; i < pc.length ; i++) {
     pc[i].display();
   }
+}
+
+public void mousePressed(){
+
 }
 
 
@@ -67,6 +60,7 @@ public void messageReceived(String topic, byte[] payload) {
     int id = PApplet.parseInt(topic.substring(topic.indexOf("-")+1,topic.indexOf("-")+3));
     if (payload[0] == '1'){
       pc[id].setLastOnline();
+      writeJSON(id);
     }
 }
 class Workstation {
@@ -104,7 +98,7 @@ class Workstation {
       }
       pushMatrix();
       translate(WIDTH*i+WIDTH/2,HEIGHT*j+HEIGHT/2);
-      rect(-WIDTH/2,-HEIGHT/2,WIDTH-2,HEIGHT-2,5,5,5,5);
+      rect(-WIDTH/2+2,-HEIGHT/2+2,WIDTH-2,HEIGHT-2,5,5,5,5);
       fill(0);
       textSize(HEIGHT/4);
       rotate(-PI/2);
@@ -123,6 +117,22 @@ class Workstation {
     lastonline[5] = second();
   }
 
+  public void readJSON(int a) {
+        JSONObject Pc = Pcs.getJSONObject(a);
+        Pc.getInt("id");
+        name = Pc.getString("name");
+        user = Pc.getString("user");
+        i = Pc.getInt("i");
+        j = Pc.getInt("j");
+        exists = Pc.getBoolean("exists");
+        lastonline[0] = Pc.getInt("lastOnlineY");
+        lastonline[1] = Pc.getInt("lastOnlineM");
+        lastonline[2] = Pc.getInt("lastOnlineD");
+        lastonline[3] = Pc.getInt("lastOnlineh");
+        lastonline[4] = Pc.getInt("lastOnlinem");
+        lastonline[5] = Pc.getInt("lastOnlines");
+  }
+
 }
 public int timeSec(int[] moment){
   int t = moment[3]*3600+moment[4]*60+moment[5];
@@ -136,15 +146,34 @@ public int timeNow(){
 
 public void  canvas() {
   stroke(11);
-  for (int i = 0 ; i <= width/WIDTH ; i++) {
-    text(i,(i*WIDTH-WIDTH/2),HEIGHT/2);
+  for (int i = 0 ; i <= 30 ; i++) {
     for (int j = 0 ; j < height/HEIGHT; j++ ) {
       line(i*WIDTH,0,i*WIDTH,height);
       line(0,j*HEIGHT,width,j*HEIGHT);
     }
   }
 }
-  public void settings() {  size(1200,880); }
+
+public void writeJSON(int i){
+JSONObject Pc = new JSONObject();
+Pc.setInt("id", i);
+Pc.setString("name", pc[i].name);
+Pc.setString("user", pc[i].user);
+Pc.setInt("i", pc[i].i);
+Pc.setInt("j", pc[i].j);
+Pc.setBoolean("exists",pc[i].exists);
+Pc.setInt("lastOnlineY", pc[i].lastonline[0]);
+Pc.setInt("lastOnlineM", pc[i].lastonline[1]);
+Pc.setInt("lastOnlineD", pc[i].lastonline[2]);
+Pc.setInt("lastOnlineh", pc[i].lastonline[3]);
+Pc.setInt("lastOnlinem", pc[i].lastonline[4]);
+Pc.setInt("lastOnlines", pc[i].lastonline[5]);
+
+Pcs.setJSONObject(i, Pc);
+
+saveJSONArray(Pcs,"data/pcs.json");
+}
+  public void settings() {  size(1400,880); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "monitor" };
     if (passedArgs != null) {

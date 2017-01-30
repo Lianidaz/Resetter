@@ -33,7 +33,7 @@ class Workstation {
       }
       pushMatrix();
       translate(WIDTH*i+WIDTH/2,HEIGHT*j+HEIGHT/2);
-      rect(-WIDTH/2,-HEIGHT/2,WIDTH-2,HEIGHT-2,5,5,5,5);
+      rect(-WIDTH/2+2,-HEIGHT/2+2,WIDTH-2,HEIGHT-2,5,5,5,5);
       fill(0);
       textSize(HEIGHT/4);
       rotate(-PI/2);
@@ -50,6 +50,22 @@ class Workstation {
     lastonline[3] = hour();
     lastonline[4] = minute();
     lastonline[5] = second();
+  }
+
+  void readJSON(int a) {
+        JSONObject Pc = Pcs.getJSONObject(a);
+        Pc.getInt("id");
+        name = Pc.getString("name");
+        user = Pc.getString("user");
+        i = Pc.getInt("i");
+        j = Pc.getInt("j");
+        exists = Pc.getBoolean("exists");
+        lastonline[0] = Pc.getInt("lastOnlineY");
+        lastonline[1] = Pc.getInt("lastOnlineM");
+        lastonline[2] = Pc.getInt("lastOnlineD");
+        lastonline[3] = Pc.getInt("lastOnlineh");
+        lastonline[4] = Pc.getInt("lastOnlinem");
+        lastonline[5] = Pc.getInt("lastOnlines");
   }
 
 }
