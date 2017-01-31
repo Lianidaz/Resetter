@@ -41,6 +41,9 @@ class Workstation {
       text(name,0,0);
       popMatrix();
     }
+    if (selected) {
+      text(name,-150,30);
+    }
   }
 
   void setLastOnline(){
@@ -68,4 +71,25 @@ class Workstation {
         lastonline[5] = Pc.getInt("lastOnlines");
   }
 
+}
+
+class Cell {
+  int i, j, pcID;
+  boolean mouseover;
+
+  Cell(int _i, int _j) {
+    i = _i;
+    j= _j;
+    mouseover = false;
+  }
+  void show() {
+    if (mouseover) {
+      fill(21,12,222,60);
+      noStroke();
+      pushMatrix();
+      translate(WIDTH*i+WIDTH/2,HEIGHT*j+HEIGHT/2);
+      rect(-WIDTH/2+2,-HEIGHT/2+2,WIDTH-2,HEIGHT-2,5,5,5,5);
+      popMatrix();
+    }
+  }
 }

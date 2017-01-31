@@ -8,12 +8,14 @@ int timeNow(){
   return t;
 }
 
-void  canvas() {
-  stroke(11);
-  for (int i = 0 ; i <= 30 ; i++) {
-    for (int j = 0 ; j < height/HEIGHT; j++ ) {
-      line(i*WIDTH,0,i*WIDTH,height);
-      line(0,j*HEIGHT,width,j*HEIGHT);
+void  canvas(boolean grid) {
+  if (grid){
+    stroke(11);
+    for (int i = 0 ; i <= 30 ; i++) {
+      for (int j = 0 ; j < height/HEIGHT; j++ ) {
+        line(i*WIDTH,0,i*WIDTH,height);
+        line(0,j*HEIGHT,width,j*HEIGHT);
+      }
     }
   }
 }
@@ -36,4 +38,16 @@ Pc.setInt("lastOnlines", pc[i].lastonline[5]);
 Pcs.setJSONObject(i, Pc);
 
 saveJSONArray(Pcs,"data/pcs.json");
+}
+
+int cellIsPc(int celli) {
+  int res = -1;
+  if (celli >= 0) {
+    for (int i = 0 ; i < parkSize ; i++ ) {
+      if ( cells[celli].i == pc[i].i && cells[celli].j == pc[i].j ) {
+        res = i;
+      }
+    }
+  }
+  return res;
 }
