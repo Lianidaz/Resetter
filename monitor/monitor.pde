@@ -11,6 +11,8 @@ int parkSize = 45;
 
 int SZ = 200;
 
+int selectedCell = -1;
+
 MQTTClient mqtt;
 // ControlP5 cp5;
 Pc[] pcs = new Pc[parkSize];
@@ -57,6 +59,11 @@ void mousePressed(){
     for (int i = 0 ; i < cells.length ; i++) {
       if (cells[i].mouseover()) {
         cells[i].selected = !cells[i].selected;
+        if (cells[i].selected)  {
+           selectedCell = i;
+         } else {
+            selectedCell = -1; 
+         }
       } else { cells[i].selected = false; }
     }
   }

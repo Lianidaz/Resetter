@@ -27,7 +27,9 @@ public void exists_checkbox_clicked(GCheckbox source, GEvent event) { //_CODE_:e
 } //_CODE_:exists_checkbox:243290:
 
 public void savebut_click(GButton source, GEvent event) { //_CODE_:savebut:534808:
-  println("savebut - GButton >> GEvent." + event + " @ " + millis());
+  if ( selectedCell >= 0){
+    // cell[selectedCell].name = 
+  }
 } //_CODE_:savebut:534808:
 
 public void cancelbut_clicked(GButton source, GEvent event) { //_CODE_:cancelbut:774756:
