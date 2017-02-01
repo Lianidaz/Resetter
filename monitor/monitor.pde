@@ -1,80 +1,70 @@
 
 import mqtt.*;
-MQTTClient mqtt;
+import g4p_controls.*;
+// import controlP5.*;
 
-JSONArray Pcs;
-
-int parkSize = 90;
+int wid = 40;
+int hei = 80;
 int gridX = 30;
 int gridY = 11;
-int overCell = -1;
+int parkSize = 45;
 
-Workstation[] pc = new Workstation[parkSize];
+int SZ = 200;
+
+MQTTClient mqtt;
+// ControlP5 cp5;
+Pc[] pcs = new Pc[parkSize];
 Cell[] cells = new Cell[(gridX*gridY)];
-float WIDTH = 40;
-float HEIGHT = 80;
 
-boolean edit = false;
+// JSONArray Pcs;
 
-void setup() {
+void setup(){
+  size(1400,880);
+  // cp5 = new ControlP5(this);
+  // cp5.addTextfield("name").setPosition(-170,50).setSize(140,30).setAutoClear(false);
+  // cp5.addTextfield("user").setPosition(-170,100).setSize(140,30).setAutoClear(false);
+  // cp5.addBang("save").setPosition(-170,height-80).setSize(60,50);
+  // cp5.addBang("cancel").setPosition(-90,height-80).setSize(60,50);
   mqtt = new MQTTClient(this);
   mqtt.connect("mqtt://admin:Q!w2e3r4@10.0.1.5","monitor");
   mqtt.subscribe("#");
-  setupGui();
-  Pcs = loadJSONArray("pcs.json");
-  size(1400,880);
-  for (int i = 0 ; i < parkSize ; i++) {
-    pc[i] = new Workstation(i);
-    pc[i].readJSON(i);
-  }
-  int cellcounter = 0;
-  for (int i = 0 ; i < gridX ; i++) {
-    for (int j = 0 ; j < gridY ; j++) {
-      cells[cellcounter] = new Cell(i,j);
-      cellcounter++;
+  // controls();
+  int counter = 0;
+  for (int j = 0 ; j < gridY ; j++ ){
+    for ( int i = 0 ; i < gridX ; i++ ){
+      cells[counter] = new Cell(counter,i,j);
+      counter++;
     }
   }
+  createGUI();
+  setgui();
 
 }
 
 void draw() {
-  background(100);
-  translate(200,0);
+  background(122);
+  // translate(200,0);
   noStroke();
-  fill(159);
-  rect(-200,0,200,height);
-  canvas(false);
-  for (int i = 1 ; i < pc.length ; i++) {
-    pc[i].display();
-  }
-  for (int i = 0 ; i < gridX*gridY ; i++){
-    if (mouseX-200 >= WIDTH*cells[i].i+2 && mouseX-200 <= WIDTH*cells[i].i+WIDTH-2 &&
-      mouseY >= HEIGHT*cells[i].j+2 && mouseY <= HEIGHT*cells[i].j+HEIGHT-2) {
-      cells[i].mouseover = true;
-      overCell = i;
-    } else {
-      cells[i].mouseover = false;
-      // overCell = -1;
-    }
+  fill(66);
+  rect(0,0,SZ,height);
+  for (int i = 0 ; i < cells.length ; i++) {
     cells[i].show();
   }
 }
 
 void mousePressed(){
-  int cell = cellIsPc(overCell);
-  for (int i = 1 ; i < pc.length ; i++) {
-    pc[i].selected = false;
-  }
-  if (cell >= 0) {
-    pc[cell].selected = true;
-  }
-}
-
-
-void messageReceived(String topic, byte[] payload) {
-    int id = int(topic.substring(topic.indexOf("-")+1,topic.indexOf("-")+3));
-    if (payload[0] == '1'){
-      pc[id].setLastOnline();
-      writeJSON(id);
+  if (mouseX>200){
+    for (int i = 0 ; i < cells.length ; i++) {
+      if (cells[i].mouseover()) {
+        cells[i].selected = !cells[i].selected;
+      } else { cells[i].selected = false; }
     }
+  }
 }
+
+// void messageReceived(String topic, byte[] payload) {
+//   for (int i = 0 ; i < pcs.length ; i++) {
+//     if (pcs[i].name = topic);
+//       pc[i].setLastOn();
+//   }
+// }

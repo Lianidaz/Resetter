@@ -1,95 +1,60 @@
-class Workstation {
-  int id;
-  String name, user;
-  float x, y;
-  int i, j;
-  boolean exists, on, selected;
-  int[] lastReset = {0,0,0,0,0,0};   // date Y-M-D h-m-s
-  int[] lastonline = {0,0,0,0,0,0};   // date Y-M-D h-m-s
+class Cell {
+  int num, col, row, pcID;
+  boolean isPc, selected;
 
-
-  Workstation(int _id) {
-    id=_id;
-    if (_id<=9){
-      name="Art-0" + id;
-    } else {
-      name="Art-" + id;
-    }
-    user="none";
-    x=WIDTH*i;
-    y=HEIGHT*j;
-    on = false;
-    selected = false;
-    exists = false;
+  Cell(int _num, int _col, int _row) {
+    num = _num;
+    col = _col;
+    row = _row;
+    isPc = false;
   }
-
-  void display(){
-    if (exists) {
-      stroke(0);
-      if (timeNow()-timeSec(lastonline)<=10) {
+  void show() {
+    if (isPc) {
+      if (pcs[pcID].on){
         fill(8,252,53);
       } else {
         fill(252,12,33);
       }
-      pushMatrix();
-      translate(WIDTH*i+WIDTH/2,HEIGHT*j+HEIGHT/2);
-      rect(-WIDTH/2+2,-HEIGHT/2+2,WIDTH-2,HEIGHT-2,5,5,5,5);
-      fill(0);
-      textSize(HEIGHT/4);
-      rotate(-PI/2);
-      textAlign(CENTER,CENTER);
-      text(name,0,0);
-      popMatrix();
+      rect(SZ+col*wid+2, row*hei+2, wid-4, hei-4,5,5,5,5);
     }
-    if (selected) {
-      text(name,-150,30);
+    if (mouseover() || selected){
+      if (selected){
+        fill(21,222,222,60);
+        noStroke();
+        rect(SZ+col*wid+2, row*hei+2, wid-4, hei-4,5,5,5,5);
+        stroke(0);
+      } else {
+        fill(21,52,222,60);
+        noStroke();
+        rect(SZ+col*wid+2, row*hei+2, wid-4, hei-4,5,5,5,5);
+        stroke(0);
+      }
     }
   }
-
-  void setLastOnline(){
-    lastonline[0] = year();
-    lastonline[1] = month();
-    lastonline[2] = day();
-    lastonline[3] = hour();
-    lastonline[4] = minute();
-    lastonline[5] = second();
+  boolean mouseover() {
+    if (mouseX >= SZ+col*wid+2
+      && mouseX <= SZ+col*wid+wid-4
+      && mouseY >= row*hei+2
+      && mouseY <= row*hei+hei-4) {
+      return true;
+    } else { return false; }
   }
-
-  void readJSON(int a) {
-        JSONObject Pc = Pcs.getJSONObject(a);
-        Pc.getInt("id");
-        name = Pc.getString("name");
-        user = Pc.getString("user");
-        i = Pc.getInt("i");
-        j = Pc.getInt("j");
-        exists = Pc.getBoolean("exists");
-        lastonline[0] = Pc.getInt("lastOnlineY");
-        lastonline[1] = Pc.getInt("lastOnlineM");
-        lastonline[2] = Pc.getInt("lastOnlineD");
-        lastonline[3] = Pc.getInt("lastOnlineh");
-        lastonline[4] = Pc.getInt("lastOnlinem");
-        lastonline[5] = Pc.getInt("lastOnlines");
-  }
-
 }
 
-class Cell {
-  int i, j, pcID;
-  boolean mouseover;
 
-  Cell(int _i, int _j) {
-    i = _i;
-    j= _j;
-    mouseover = false;
-  }
-  void show() {
-    if (mouseover) {
-      fill(21,12,222,60);
-      noStroke();
-      pushMatrix();
-      translate(WIDTH*i+WIDTH/2,HEIGHT*j+HEIGHT/2);
-      rect(-WIDTH/2+2,-HEIGHT/2+2,WIDTH-2,HEIGHT-2,5,5,5,5);
-      popMatrix();
-    }
+class Pc {
+  boolean on, exists;
+  int cellNum;
+  String name, user;
+  int[] laston = {0,0,0,0,0,0};   // date Y-M-D h-m-s
+  int[] lastReset = {0,0,0,0,0,0};   // date Y-M-D h-m-s
+
+  void setLastOn(){
+    laston[0] = year();
+    laston[1] = month();
+    laston[2] = day();
+    laston[3] = hour();
+    laston[4] = minute();
+    laston[5] = second();
   }
 }
