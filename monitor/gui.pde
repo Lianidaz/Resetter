@@ -14,26 +14,28 @@
  * =========================================================
  */
 
-public void namefield_change(GTextField source, GEvent event) { //_CODE_:namefield:522109:
-  println("namefield - GTextField >> GEvent." + event + " @ " + millis());
-} //_CODE_:namefield:522109:
-
-public void userfield_change(GTextField source, GEvent event) { //_CODE_:userfield:274138:
-  println("userfield - GTextField >> GEvent." + event + " @ " + millis());
-} //_CODE_:userfield:274138:
-
 public void exists_checkbox_clicked(GCheckbox source, GEvent event) { //_CODE_:exists_checkbox:243290:
-  println("exists_checkbox - GCheckbox >> GEvent." + event + " @ " + millis());
+
 } //_CODE_:exists_checkbox:243290:
 
 public void savebut_click(GButton source, GEvent event) { //_CODE_:savebut:534808:
   if ( selectedCell >= 0){
-    // cell[selectedCell].name = 
+    if (cells[selectedCell].pcID < 0){
+      println(cells[selectedCell].pcID);
+      cells[selectedCell].pcID = freeID;
+      pcs[selectedCell].cellNum = selectedCell;
+      freeID++;
+    }
+    pcs[cells[selectedCell].pcID].name = namefield.getText();
+    pcs[cells[selectedCell].pcID].user = userfield.getText();
+    pcs[cells[selectedCell].pcID].exists = cells[selectedCell].isPc = exists_checkbox.isSelected();
   }
+  cells[selectedCell].selected = false;
+  selectedCell = -1;
 } //_CODE_:savebut:534808:
 
 public void cancelbut_clicked(GButton source, GEvent event) { //_CODE_:cancelbut:774756:
-  println("cancelbut - GButton >> GEvent." + event + " @ " + millis());
+
 } //_CODE_:cancelbut:774756:
 
 
@@ -52,14 +54,13 @@ public void createGUI(){
   cancelbut = new GButton(this, 110, 820, 60, 30);
 }
 
-public void setgui(){  namefield.setLocalColorScheme(GCScheme.ORANGE_SCHEME);
+public void setgui(){
+  namefield.setLocalColorScheme(GCScheme.ORANGE_SCHEME);
   namefield.setOpaque(true);
-  namefield.addEventHandler(this, "namefield_change");
   namefield.setText(null);
   namefield.setPromptText("Hostname");
   userfield.setLocalColorScheme(GCScheme.ORANGE_SCHEME);
   userfield.setOpaque(true);
-  userfield.addEventHandler(this, "userfield_change");
   userfield.setText(null);
   userfield.setPromptText("Username");
   exists_checkbox.setIconAlign(GAlign.LEFT, GAlign.MIDDLE);

@@ -8,6 +8,7 @@ int hei = 80;
 int gridX = 30;
 int gridY = 11;
 int parkSize = 45;
+int freeID = 0;
 
 int SZ = 200;
 
@@ -27,11 +28,14 @@ void setup(){
   // cp5.addTextfield("user").setPosition(-170,100).setSize(140,30).setAutoClear(false);
   // cp5.addBang("save").setPosition(-170,height-80).setSize(60,50);
   // cp5.addBang("cancel").setPosition(-90,height-80).setSize(60,50);
-  mqtt = new MQTTClient(this);
-  mqtt.connect("mqtt://admin:Q!w2e3r4@10.0.1.5","monitor");
-  mqtt.subscribe("#");
+  // mqtt = new MQTTClient(this);
+  // mqtt.connect("mqtt://admin:Q!w2e3r4@10.0.1.5","monitor");
+  // mqtt.subscribe("#");
   // controls();
   int counter = 0;
+  for (int i = 0 ; i < parkSize ; i++ ){
+    pcs[i] = new Pc();
+  }
   for (int j = 0 ; j < gridY ; j++ ){
     for ( int i = 0 ; i < gridX ; i++ ){
       cells[counter] = new Cell(counter,i,j);
@@ -45,7 +49,6 @@ void setup(){
 
 void draw() {
   background(122);
-  // translate(200,0);
   noStroke();
   fill(66);
   rect(0,0,SZ,height);
@@ -59,10 +62,19 @@ void mousePressed(){
     for (int i = 0 ; i < cells.length ; i++) {
       if (cells[i].mouseover()) {
         cells[i].selected = !cells[i].selected;
-        if (cells[i].selected)  {
+        if (cells[i].selected) {
            selectedCell = i;
+           if (cells[selectedCell].isPc) {
+             namefield.setText(pcs[cells[selectedCell].pcID].name);
+             userfield.setText(pcs[cells[selectedCell].pcID].user);
+             exists_checkbox.setSelected(pcs[cells[selectedCell].pcID].exists);
+           } else {
+             namefield.setText("");
+             userfield.setText("");             
+             exists_checkbox.setSelected(false);
+           }
          } else {
-            selectedCell = -1; 
+            selectedCell = -1;
          }
       } else { cells[i].selected = false; }
     }

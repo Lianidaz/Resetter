@@ -7,6 +7,7 @@ class Cell {
     col = _col;
     row = _row;
     isPc = false;
+    int pcID = -1;
   }
   void show() {
     if (isPc) {
@@ -16,6 +17,14 @@ class Cell {
         fill(252,12,33);
       }
       rect(SZ+col*wid+2, row*hei+2, wid-4, hei-4,5,5,5,5);
+      pushMatrix();
+      translate(SZ+col*wid+wid/2,row*hei+hei/2);
+      textAlign(CENTER,CENTER);
+      rotate(-PI/2);
+      fill(0);
+      textSize(18);
+      text(pcs[pcID].name,0,0);
+      popMatrix();
     }
     if (mouseover() || selected){
       if (selected){
@@ -48,6 +57,10 @@ class Pc {
   String name, user;
   int[] laston = {0,0,0,0,0,0};   // date Y-M-D h-m-s
   int[] lastReset = {0,0,0,0,0,0};   // date Y-M-D h-m-s
+
+  Pc() {
+    cellNum = -1;
+  }
 
   void setLastOn(){
     laston[0] = year();

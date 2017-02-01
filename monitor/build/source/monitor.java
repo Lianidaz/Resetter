@@ -27,8 +27,11 @@ int hei = 80;
 int gridX = 30;
 int gridY = 11;
 int parkSize = 45;
+int freeID = 0;
 
 int SZ = 200;
+
+int selectedCell = -1;
 
 MQTTClient mqtt;
 // ControlP5 cp5;
@@ -44,11 +47,14 @@ public void setup(){
   // cp5.addTextfield("user").setPosition(-170,100).setSize(140,30).setAutoClear(false);
   // cp5.addBang("save").setPosition(-170,height-80).setSize(60,50);
   // cp5.addBang("cancel").setPosition(-90,height-80).setSize(60,50);
-  mqtt = new MQTTClient(this);
-  mqtt.connect("mqtt://admin:Q!w2e3r4@10.0.1.5","monitor");
-  mqtt.subscribe("#");
+  // mqtt = new MQTTClient(this);
+  // mqtt.connect("mqtt://admin:Q!w2e3r4@10.0.1.5","monitor");
+  // mqtt.subscribe("#");
   // controls();
   int counter = 0;
+  for (int i = 0 ; i < parkSize ; i++ ){
+    pcs[i] = new Pc();
+  }
   for (int j = 0 ; j < gridY ; j++ ){
     for ( int i = 0 ; i < gridX ; i++ ){
       cells[counter] = new Cell(counter,i,j);
@@ -62,7 +68,6 @@ public void setup(){
 
 public void draw() {
   background(122);
-  // translate(200,0);
   noStroke();
   fill(66);
   rect(0,0,SZ,height);
@@ -76,6 +81,20 @@ public void mousePressed(){
     for (int i = 0 ; i < cells.length ; i++) {
       if (cells[i].mouseover()) {
         cells[i].selected = !cells[i].selected;
+        if (cells[i].selected) {
+           selectedCell = i;
+           if (cells[selectedCell].isPc) {
+             namefield.setText(pcs[cells[selectedCell].pcID].name);
+             userfield.setText(pcs[cells[selectedCell].pcID].user);
+             exists_checkbox.setSelected(pcs[cells[selectedCell].pcID].exists);
+           } else {
+             namefield.setText("");
+             userfield.setText("");             
+             exists_checkbox.setSelected(false);
+           }
+         } else {
+            selectedCell = -1;
+         }
       } else { cells[i].selected = false; }
     }
   }
@@ -96,6 +115,7 @@ class Cell {
     col = _col;
     row = _row;
     isPc = false;
+    int pcID = -1;
   }
   public void show() {
     if (isPc) {
@@ -105,6 +125,14 @@ class Cell {
         fill(252,12,33);
       }
       rect(SZ+col*wid+2, row*hei+2, wid-4, hei-4,5,5,5,5);
+      pushMatrix();
+      translate(SZ+col*wid+wid/2,row*hei+hei/2);
+      textAlign(CENTER,CENTER);
+      rotate(-PI/2);
+      fill(0);
+      textSize(18);
+      text(pcs[pcID].name,0,0);
+      popMatrix();
     }
     if (mouseover() || selected){
       if (selected){
@@ -137,6 +165,10 @@ class Pc {
   String name, user;
   int[] laston = {0,0,0,0,0,0};   // date Y-M-D h-m-s
   int[] lastReset = {0,0,0,0,0,0};   // date Y-M-D h-m-s
+
+  Pc() {
+    cellNum = -1;
+  }
 
   public void setLastOn(){
     laston[0] = year();
@@ -176,24 +208,28 @@ public int timeNow(){
  * =========================================================
  */
 
-public void namefield_change(GTextField source, GEvent event) { //_CODE_:namefield:522109:
-  println("namefield - GTextField >> GEvent." + event + " @ " + millis());
-} //_CODE_:namefield:522109:
-
-public void userfield_change(GTextField source, GEvent event) { //_CODE_:userfield:274138:
-  println("userfield - GTextField >> GEvent." + event + " @ " + millis());
-} //_CODE_:userfield:274138:
-
 public void exists_checkbox_clicked(GCheckbox source, GEvent event) { //_CODE_:exists_checkbox:243290:
-  println("exists_checkbox - GCheckbox >> GEvent." + event + " @ " + millis());
+
 } //_CODE_:exists_checkbox:243290:
 
 public void savebut_click(GButton source, GEvent event) { //_CODE_:savebut:534808:
-  println("savebut - GButton >> GEvent." + event + " @ " + millis());
+  if ( selectedCell >= 0){
+    if (cells[selectedCell].pcID < 0){
+      println(cells[selectedCell].pcID);
+      cells[selectedCell].pcID = freeID;
+      pcs[selectedCell].cellNum = selectedCell;
+      freeID++;
+    }
+    pcs[cells[selectedCell].pcID].name = namefield.getText();
+    pcs[cells[selectedCell].pcID].user = userfield.getText();
+    pcs[cells[selectedCell].pcID].exists = cells[selectedCell].isPc = exists_checkbox.isSelected();
+  }
+  cells[selectedCell].selected = false;
+  selectedCell = -1;
 } //_CODE_:savebut:534808:
 
 public void cancelbut_clicked(GButton source, GEvent event) { //_CODE_:cancelbut:774756:
-  println("cancelbut - GButton >> GEvent." + event + " @ " + millis());
+
 } //_CODE_:cancelbut:774756:
 
 
@@ -212,14 +248,13 @@ public void createGUI(){
   cancelbut = new GButton(this, 110, 820, 60, 30);
 }
 
-public void setgui(){  namefield.setLocalColorScheme(GCScheme.ORANGE_SCHEME);
+public void setgui(){
+  namefield.setLocalColorScheme(GCScheme.ORANGE_SCHEME);
   namefield.setOpaque(true);
-  namefield.addEventHandler(this, "namefield_change");
   namefield.setText(null);
   namefield.setPromptText("Hostname");
   userfield.setLocalColorScheme(GCScheme.ORANGE_SCHEME);
   userfield.setOpaque(true);
-  userfield.addEventHandler(this, "userfield_change");
   userfield.setText(null);
   userfield.setPromptText("Username");
   exists_checkbox.setIconAlign(GAlign.LEFT, GAlign.MIDDLE);
