@@ -29,7 +29,7 @@ int gridY = 11;
 int parkSize = 45;
 int freeID = 0;
 
-int SZ = 200;
+int SZ;
 
 int selectedCell = -1;
 
@@ -42,6 +42,7 @@ Cell[] cells = new Cell[(gridX*gridY)];
 
 public void setup(){
   
+  SZ = width - wid * gridX;
   // cp5 = new ControlP5(this);
   // cp5.addTextfield("name").setPosition(-170,50).setSize(140,30).setAutoClear(false);
   // cp5.addTextfield("user").setPosition(-170,100).setSize(140,30).setAutoClear(false);
@@ -64,6 +65,8 @@ public void setup(){
   createGUI();
   setgui();
 
+  println("parkSize = " + parkSize + " cells: " + cells.length);
+
 }
 
 public void draw() {
@@ -79,6 +82,7 @@ public void draw() {
 public void mousePressed(){
   if (mouseX>200){
     for (int i = 0 ; i < cells.length ; i++) {
+      // println(cells[i].pcID);
       if (cells[i].mouseover()) {
         cells[i].selected = !cells[i].selected;
         if (cells[i].selected) {
@@ -89,7 +93,7 @@ public void mousePressed(){
              exists_checkbox.setSelected(pcs[cells[selectedCell].pcID].exists);
            } else {
              namefield.setText("");
-             userfield.setText("");             
+             userfield.setText("");
              exists_checkbox.setSelected(false);
            }
          } else {
@@ -98,6 +102,7 @@ public void mousePressed(){
       } else { cells[i].selected = false; }
     }
   }
+  println(selectedCell);
 }
 
 // void messageReceived(String topic, byte[] payload) {
@@ -124,6 +129,7 @@ class Cell {
       } else {
         fill(252,12,33);
       }
+      strokeWeight(1);
       rect(SZ+col*wid+2, row*hei+2, wid-4, hei-4,5,5,5,5);
       pushMatrix();
       translate(SZ+col*wid+wid/2,row*hei+hei/2);
@@ -139,12 +145,10 @@ class Cell {
         fill(21,222,222,60);
         noStroke();
         rect(SZ+col*wid+2, row*hei+2, wid-4, hei-4,5,5,5,5);
-        stroke(0);
       } else {
         fill(21,52,222,60);
         noStroke();
         rect(SZ+col*wid+2, row*hei+2, wid-4, hei-4,5,5,5,5);
-        stroke(0);
       }
     }
   }
@@ -214,18 +218,35 @@ public void exists_checkbox_clicked(GCheckbox source, GEvent event) { //_CODE_:e
 
 public void savebut_click(GButton source, GEvent event) { //_CODE_:savebut:534808:
   if ( selectedCell >= 0){
-    if (cells[selectedCell].pcID < 0){
-      println(cells[selectedCell].pcID);
+    println(selectedCell + " - " + cells[selectedCell].pcID);
+    if (cells[selectedCell].pcID <= 0 && exists_checkbox.isSelected()){
+      for(int i = 0 ; i < pcs.length ; i++ ) {
+        if (!pcs[i].exists){
+          freeID = i;
+          break;
+        }
+      }
+
       cells[selectedCell].pcID = freeID;
-      pcs[selectedCell].cellNum = selectedCell;
-      freeID++;
+      pcs[cells[selectedCell].pcID].cellNum = selectedCell;
+      println(cells[selectedCell].pcID);
     }
     pcs[cells[selectedCell].pcID].name = namefield.getText();
     pcs[cells[selectedCell].pcID].user = userfield.getText();
     pcs[cells[selectedCell].pcID].exists = cells[selectedCell].isPc = exists_checkbox.isSelected();
+
+  }
+  if (!exists_checkbox.isSelected()) {
+    pcs[cells[selectedCell].pcID].exists = false;
+    pcs[cells[selectedCell].pcID].cellNum = -1;
+    cells[selectedCell].pcID = -1;
   }
   cells[selectedCell].selected = false;
   selectedCell = -1;
+  println("-------------------");
+    for(int i = 0 ; i < pcs.length ; i++ ) {
+      println(pcs[i].cellNum);
+    }
 } //_CODE_:savebut:534808:
 
 public void cancelbut_clicked(GButton source, GEvent event) { //_CODE_:cancelbut:774756:

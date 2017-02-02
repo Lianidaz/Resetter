@@ -10,7 +10,7 @@ int gridY = 11;
 int parkSize = 45;
 int freeID = 0;
 
-int SZ = 200;
+int SZ;
 
 int selectedCell = -1;
 
@@ -23,6 +23,7 @@ Cell[] cells = new Cell[(gridX*gridY)];
 
 void setup(){
   size(1400,880);
+  SZ = width - wid * gridX;
   // cp5 = new ControlP5(this);
   // cp5.addTextfield("name").setPosition(-170,50).setSize(140,30).setAutoClear(false);
   // cp5.addTextfield("user").setPosition(-170,100).setSize(140,30).setAutoClear(false);
@@ -45,6 +46,8 @@ void setup(){
   createGUI();
   setgui();
 
+  println("parkSize = " + parkSize + " cells: " + cells.length);
+
 }
 
 void draw() {
@@ -60,6 +63,7 @@ void draw() {
 void mousePressed(){
   if (mouseX>200){
     for (int i = 0 ; i < cells.length ; i++) {
+      // println(cells[i].pcID);
       if (cells[i].mouseover()) {
         cells[i].selected = !cells[i].selected;
         if (cells[i].selected) {
@@ -70,7 +74,7 @@ void mousePressed(){
              exists_checkbox.setSelected(pcs[cells[selectedCell].pcID].exists);
            } else {
              namefield.setText("");
-             userfield.setText("");             
+             userfield.setText("");
              exists_checkbox.setSelected(false);
            }
          } else {
@@ -79,6 +83,7 @@ void mousePressed(){
       } else { cells[i].selected = false; }
     }
   }
+  println(selectedCell);
 }
 
 // void messageReceived(String topic, byte[] payload) {
