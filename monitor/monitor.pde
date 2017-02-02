@@ -83,7 +83,7 @@ void mousePressed(){
       } else { cells[i].selected = false; }
     }
   }
-  println(selectedCell);
+  // println(selectedCell);
 }
 
 // void messageReceived(String topic, byte[] payload) {

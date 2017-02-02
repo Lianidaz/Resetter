@@ -20,7 +20,7 @@ public void exists_checkbox_clicked(GCheckbox source, GEvent event) { //_CODE_:e
 
 public void savebut_click(GButton source, GEvent event) { //_CODE_:savebut:534808:
   if ( selectedCell >= 0){
-    println(selectedCell + " - " + cells[selectedCell].pcID);
+    // println(selectedCell + " - " + cells[selectedCell].pcID);
     if (cells[selectedCell].pcID <= 0 && exists_checkbox.isSelected()){
       for(int i = 0 ; i < pcs.length ; i++ ) {
         if (!pcs[i].exists){
@@ -44,8 +44,8 @@ public void savebut_click(GButton source, GEvent event) { //_CODE_:savebut:53480
     cells[selectedCell].pcID = -1;
   }
   cells[selectedCell].selected = false;
-  selectedCell = -1;
-  println("-------------------");
+  // selectedCell = -1;
+  // println("-------------------");
     for(int i = 0 ; i < pcs.length ; i++ ) {
       println(pcs[i].cellNum);
     }
