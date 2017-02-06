@@ -43,14 +43,9 @@ Cell[] cells = new Cell[(gridX*gridY)];
 public void setup(){
   
   SZ = width - wid * gridX;
-  // cp5 = new ControlP5(this);
-  // cp5.addTextfield("name").setPosition(-170,50).setSize(140,30).setAutoClear(false);
-  // cp5.addTextfield("user").setPosition(-170,100).setSize(140,30).setAutoClear(false);
-  // cp5.addBang("save").setPosition(-170,height-80).setSize(60,50);
-  // cp5.addBang("cancel").setPosition(-90,height-80).setSize(60,50);
-  // mqtt = new MQTTClient(this);
-  // mqtt.connect("mqtt://admin:Q!w2e3r4@10.0.1.5","monitor");
-  // mqtt.subscribe("#");
+  mqtt = new MQTTClient(this);
+  mqtt.connect("mqtt://admin:Q!w2e3r4@10.0.1.5","monitor");
+  mqtt.subscribe("#");
   // controls();
   int counter = 0;
   for (int i = 0 ; i < parkSize ; i++ ){
@@ -105,12 +100,13 @@ public void mousePressed(){
   println(selectedCell);
 }
 
-// void messageReceived(String topic, byte[] payload) {
-//   for (int i = 0 ; i < pcs.length ; i++) {
-//     if (pcs[i].name = topic);
-//       pc[i].setLastOn();
-//   }
-// }
+public void messageReceived(String topic, byte[] payload) {
+  for (int i = 0 ; i < pcs.length ; i++) {
+    if (pcs[i].name == topic) {
+      pcs[i].setLastOn();
+    }
+  }
+}
 class Cell {
   int num, col, row, pcID;
   boolean isPc, selected;
@@ -124,7 +120,7 @@ class Cell {
   }
   public void show() {
     if (isPc) {
-      if (pcs[pcID].on){
+      if (pcs[pcID].on()){
         fill(8,252,53);
       } else {
         fill(252,12,33);
@@ -164,7 +160,7 @@ class Cell {
 
 
 class Pc {
-  boolean on, exists;
+  boolean exists;
   int cellNum;
   String name, user;
   int[] laston = {0,0,0,0,0,0};   // date Y-M-D h-m-s
@@ -172,6 +168,11 @@ class Pc {
 
   Pc() {
     cellNum = -1;
+  }
+
+  public boolean on() {
+    if (timeNow() - timeSec(laston) < 10) return true;
+    else return false;
   }
 
   public void setLastOn(){

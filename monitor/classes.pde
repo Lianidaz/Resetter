@@ -11,7 +11,7 @@ class Cell {
   }
   void show() {
     if (isPc) {
-      if (pcs[pcID].on){
+      if (pcs[pcID].on()){
         fill(8,252,53);
       } else {
         fill(252,12,33);
@@ -51,7 +51,7 @@ class Cell {
 
 
 class Pc {
-  boolean on, exists;
+  boolean exists;
   int cellNum;
   String name, user;
   int[] laston = {0,0,0,0,0,0};   // date Y-M-D h-m-s
@@ -59,6 +59,11 @@ class Pc {
 
   Pc() {
     cellNum = -1;
+  }
+
+  boolean on() {
+    if (timeNow() - timeSec(laston) < 10) return true;
+    else return false;
   }
 
   void setLastOn(){

@@ -24,14 +24,9 @@ Cell[] cells = new Cell[(gridX*gridY)];
 void setup(){
   size(1400,880);
   SZ = width - wid * gridX;
-  // cp5 = new ControlP5(this);
-  // cp5.addTextfield("name").setPosition(-170,50).setSize(140,30).setAutoClear(false);
-  // cp5.addTextfield("user").setPosition(-170,100).setSize(140,30).setAutoClear(false);
-  // cp5.addBang("save").setPosition(-170,height-80).setSize(60,50);
-  // cp5.addBang("cancel").setPosition(-90,height-80).setSize(60,50);
-  // mqtt = new MQTTClient(this);
-  // mqtt.connect("mqtt://admin:Q!w2e3r4@10.0.1.5","monitor");
-  // mqtt.subscribe("#");
+  mqtt = new MQTTClient(this);
+  mqtt.connect("mqtt://admin:Q!w2e3r4@10.0.1.5","monitor");
+  mqtt.subscribe("#");
   // controls();
   int counter = 0;
   for (int i = 0 ; i < parkSize ; i++ ){
@@ -86,9 +81,10 @@ void mousePressed(){
   println(selectedCell);
 }
 
-// void messageReceived(String topic, byte[] payload) {
-//   for (int i = 0 ; i < pcs.length ; i++) {
-//     if (pcs[i].name = topic);
-//       pc[i].setLastOn();
-//   }
-// }
+void messageReceived(String topic, byte[] payload) {
+  for (int i = 0 ; i < pcs.length ; i++) {
+    if (pcs[i].name == topic) {
+      pcs[i].setLastOn();
+    }
+  }
+}
