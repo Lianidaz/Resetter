@@ -20,6 +20,7 @@ public void exists_checkbox_clicked(GCheckbox source, GEvent event) { //_CODE_:e
 
 public void savebut_click(GButton source, GEvent event) { //_CODE_:savebut:534808:
   if ( selectedCell >= 0){
+<<<<<<< HEAD
     // println(selectedCell + " - " + cells[selectedCell].pcID);
     if (cells[selectedCell].pcID < 0 && exists_checkbox.isSelected()){
       for(int i = 0 ; i < pcs.length ; i++ ) {
@@ -32,23 +33,28 @@ public void savebut_click(GButton source, GEvent event) { //_CODE_:savebut:53480
       cells[selectedCell].pcID = freeID;
       pcs[cells[selectedCell].pcID].cellNum = selectedCell;
       // println(cells[selectedCell].pcID);
+=======
+    if (cells[selectedCell].pcID < 0){
+      println(cells[selectedCell].pcID);
+      cells[selectedCell].pcID = freeID;
+      pcs[selectedCell].cellNum = selectedCell;
+      freeID++;
+>>>>>>> parent of 0d91d05... store things!
     }
     pcs[cells[selectedCell].pcID].name = namefield.getText();
     pcs[cells[selectedCell].pcID].user = userfield.getText();
     pcs[cells[selectedCell].pcID].exists = cells[selectedCell].isPc = exists_checkbox.isSelected();
-
-  }
-  if (!exists_checkbox.isSelected()) {
-    pcs[cells[selectedCell].pcID].exists = false;
-    pcs[cells[selectedCell].pcID].cellNum = -1;
-    cells[selectedCell].pcID = -1;
   }
   cells[selectedCell].selected = false;
+<<<<<<< HEAD
   // selectedCell = -1;
   // println("-------------------");
     // for(int i = 0 ; i < pcs.length ; i++ ) {
     //   println(pcs[i].cellNum);
     // }
+=======
+  selectedCell = -1;
+>>>>>>> parent of 0d91d05... store things!
 } //_CODE_:savebut:534808:
 
 public void cancelbut_clicked(GButton source, GEvent event) { //_CODE_:cancelbut:774756:

@@ -9,7 +9,7 @@ int gridY = 11;
 int parkSize = 45;
 int freeID = 0;
 
-int SZ;
+int SZ = 200;
 
 int selectedCell = -1;
 
@@ -22,10 +22,22 @@ Cell[] cells = new Cell[(gridX*gridY)];
 
 void setup(){
   size(1400,880);
+<<<<<<< HEAD
   SZ = width - wid * gridX;
   mqtt = new MQTTClient(this);
   mqtt.connect("mqtt://admin:Q!w2e3r4@10.0.1.5","monitor");
   mqtt.subscribe("#");
+=======
+  // cp5 = new ControlP5(this);
+  // cp5.addTextfield("name").setPosition(-170,50).setSize(140,30).setAutoClear(false);
+  // cp5.addTextfield("user").setPosition(-170,100).setSize(140,30).setAutoClear(false);
+  // cp5.addBang("save").setPosition(-170,height-80).setSize(60,50);
+  // cp5.addBang("cancel").setPosition(-90,height-80).setSize(60,50);
+  // mqtt = new MQTTClient(this);
+  // mqtt.connect("mqtt://admin:Q!w2e3r4@10.0.1.5","monitor");
+  // mqtt.subscribe("#");
+  // controls();
+>>>>>>> parent of 0d91d05... store things!
   int counter = 0;
   for (int i = 0 ; i < parkSize ; i++ ){
     pcs[i] = new Pc();
@@ -38,6 +50,10 @@ void setup(){
   }
   createGUI();
   setgui();
+<<<<<<< HEAD
+=======
+
+>>>>>>> parent of 0d91d05... store things!
 }
 
 void draw() {
@@ -53,7 +69,6 @@ void draw() {
 void mousePressed(){
   if (mouseX>200){
     for (int i = 0 ; i < cells.length ; i++) {
-      // println(cells[i].pcID);
       if (cells[i].mouseover()) {
         cells[i].selected = !cells[i].selected;
         if (cells[i].selected) {
@@ -64,7 +79,7 @@ void mousePressed(){
              exists_checkbox.setSelected(pcs[cells[selectedCell].pcID].exists);
            } else {
              namefield.setText("");
-             userfield.setText("");
+             userfield.setText("");             
              exists_checkbox.setSelected(false);
            }
          } else {

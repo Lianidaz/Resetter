@@ -17,7 +17,6 @@ class Cell {
       } else {
         fill(252,12,33);
       }
-      strokeWeight(1);
       rect(SZ+col*wid+2, row*hei+2, wid-4, hei-4,5,5,5,5);
       pushMatrix();
       translate(SZ+col*wid+wid/2,row*hei+hei/2);
@@ -33,10 +32,12 @@ class Cell {
         fill(21,222,222,60);
         noStroke();
         rect(SZ+col*wid+2, row*hei+2, wid-4, hei-4,5,5,5,5);
+        stroke(0);
       } else {
         fill(21,52,222,60);
         noStroke();
         rect(SZ+col*wid+2, row*hei+2, wid-4, hei-4,5,5,5,5);
+        stroke(0);
       }
     }
   }
