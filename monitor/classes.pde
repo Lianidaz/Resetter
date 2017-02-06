@@ -11,12 +11,12 @@ class Cell {
   }
   void show() {
     if (isPc) {
-      pcs[pcID].getOn();
       if (pcs[pcID].on){
         fill(8,252,53);
       } else {
         fill(252,12,33);
       }
+      strokeWeight(1);
       rect(SZ+col*wid+2, row*hei+2, wid-4, hei-4,5,5,5,5);
       pushMatrix();
       translate(SZ+col*wid+wid/2,row*hei+hei/2);
@@ -32,12 +32,10 @@ class Cell {
         fill(21,222,222,60);
         noStroke();
         rect(SZ+col*wid+2, row*hei+2, wid-4, hei-4,5,5,5,5);
-        stroke(0);
       } else {
         fill(21,52,222,60);
         noStroke();
         rect(SZ+col*wid+2, row*hei+2, wid-4, hei-4,5,5,5,5);
-        stroke(0);
       }
     }
   }
@@ -63,10 +61,6 @@ class Pc {
     cellNum = -1;
   }
 
-  void getOn() {
-    on = (timeNow() - timeSec(laston) <= 10);
-  }
-
   void setLastOn(){
     laston[0] = year();
     laston[1] = month();
@@ -75,4 +69,14 @@ class Pc {
     laston[4] = minute();
     laston[5] = second();
   }
+}
+
+int timeSec(int[] moment){
+  int t = moment[3]*3600+moment[4]*60+moment[5];
+  return t;
+}
+
+int timeNow(){
+  int t = hour()*3600+minute()*60+second();
+  return t;
 }
