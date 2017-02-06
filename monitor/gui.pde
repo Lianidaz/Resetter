@@ -21,6 +21,7 @@ public void exists_checkbox_clicked(GCheckbox source, GEvent event) { //_CODE_:e
 public void savebut_click(GButton source, GEvent event) { //_CODE_:savebut:534808:
   if ( selectedCell >= 0){
 <<<<<<< HEAD
+<<<<<<< HEAD
     // println(selectedCell + " - " + cells[selectedCell].pcID);
     if (cells[selectedCell].pcID < 0 && exists_checkbox.isSelected()){
       for(int i = 0 ; i < pcs.length ; i++ ) {
@@ -34,11 +35,16 @@ public void savebut_click(GButton source, GEvent event) { //_CODE_:savebut:53480
       pcs[cells[selectedCell].pcID].cellNum = selectedCell;
       // println(cells[selectedCell].pcID);
 =======
+=======
+>>>>>>> parent of 0d91d05... store things!
     if (cells[selectedCell].pcID < 0){
       println(cells[selectedCell].pcID);
       cells[selectedCell].pcID = freeID;
       pcs[selectedCell].cellNum = selectedCell;
       freeID++;
+<<<<<<< HEAD
+>>>>>>> parent of 0d91d05... store things!
+=======
 >>>>>>> parent of 0d91d05... store things!
     }
     pcs[cells[selectedCell].pcID].name = namefield.getText();
@@ -54,6 +60,9 @@ public void savebut_click(GButton source, GEvent event) { //_CODE_:savebut:53480
     // }
 =======
   selectedCell = -1;
+<<<<<<< HEAD
+>>>>>>> parent of 0d91d05... store things!
+=======
 >>>>>>> parent of 0d91d05... store things!
 } //_CODE_:savebut:534808:
 

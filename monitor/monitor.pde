@@ -23,11 +23,14 @@ Cell[] cells = new Cell[(gridX*gridY)];
 void setup(){
   size(1400,880);
 <<<<<<< HEAD
+<<<<<<< HEAD
   SZ = width - wid * gridX;
   mqtt = new MQTTClient(this);
   mqtt.connect("mqtt://admin:Q!w2e3r4@10.0.1.5","monitor");
   mqtt.subscribe("#");
 =======
+=======
+>>>>>>> parent of 0d91d05... store things!
   // cp5 = new ControlP5(this);
   // cp5.addTextfield("name").setPosition(-170,50).setSize(140,30).setAutoClear(false);
   // cp5.addTextfield("user").setPosition(-170,100).setSize(140,30).setAutoClear(false);
@@ -53,6 +56,9 @@ void setup(){
 <<<<<<< HEAD
 =======
 
+<<<<<<< HEAD
+>>>>>>> parent of 0d91d05... store things!
+=======
 >>>>>>> parent of 0d91d05... store things!
 }
 
