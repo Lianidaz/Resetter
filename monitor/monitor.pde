@@ -2,6 +2,8 @@
 import mqtt.*;
 import g4p_controls.*;
 // import controlP5.*;
+JSONObject jayson = new JSONObject(pcs.json);
+JSONArray PCS;
 
 int wid = 40;
 int hei = 80;
