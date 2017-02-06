@@ -11,6 +11,7 @@ class Cell {
   }
   void show() {
     if (isPc) {
+      pcs[pcID].getOn();
       if (pcs[pcID].on){
         fill(8,252,53);
       } else {
@@ -59,6 +60,10 @@ class Pc {
 
   Pc() {
     cellNum = -1;
+  }
+
+  void getOn() {
+    on = (timeNow() - timeSec(laston) <= 10);
   }
 
   void setLastOn(){
