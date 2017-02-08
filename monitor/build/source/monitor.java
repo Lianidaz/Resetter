@@ -21,7 +21,9 @@ public class monitor extends PApplet {
 
 
 // import controlP5.*;
+JSONArray Records;
 
+Mqttspy mqttspy;
 int wid = 40;
 int hei = 80;
 int gridX = 30;
@@ -59,9 +61,9 @@ public void setup(){
   }
   createGUI();
   setgui();
-
+  mqttspy = new Mqttspy();
   println("parkSize = " + parkSize + " cells: " + cells.length);
-
+  Jread();
 }
 
 public void draw() {
@@ -72,9 +74,11 @@ public void draw() {
   for (int i = 0 ; i < cells.length ; i++) {
     cells[i].show();
   }
+  mqttspy.show();
 }
 
 public void mousePressed(){
+  Jread();
   if (mouseX>200){
     for (int i = 0 ; i < cells.length ; i++) {
       // println(cells[i].pcID);
@@ -97,13 +101,15 @@ public void mousePressed(){
       } else { cells[i].selected = false; }
     }
   }
-  println(selectedCell);
 }
 
 public void messageReceived(String topic, byte[] payload) {
+  String mess = new String(payload);
+  mqttspy.update(topic + " : " + mess);
+  println(topic + " : " + mess);
   for (int i = 0 ; i < pcs.length ; i++) {
-    if (pcs[i].name == topic) {
-      pcs[i].setLastOn();
+    if (topic.equals(pcs[i].name)) {
+      pcs[i].setInfo(mess);
     }
   }
 }
@@ -175,6 +181,13 @@ class Pc {
     else return false;
   }
 
+  public void setInfo(String msg) {
+    if (msg.equals("1")) {
+      setLastOn();
+    }
+
+  }
+
   public void setLastOn(){
     laston[0] = year();
     laston[1] = month();
@@ -183,6 +196,63 @@ class Pc {
     laston[4] = minute();
     laston[5] = second();
   }
+
+}
+
+class Mqttspy {
+  String[] lines = new String[15];
+  Mqttspy() {
+    for (int i = 0 ; i < lines.length ; i++) {
+      lines[i] = "";
+    }
+  }
+  public void show() {
+    fill(255);
+    stroke(0);
+    strokeWeight(3);
+    rect(30,200,140,291);
+    fill(0);
+    textSize(13);
+    textAlign(LEFT);
+    for (int i = 0 ; i< lines.length ; i++) {
+      text(lines[i], 35, 218 + i*19);
+    }
+  }
+
+  public void update(String msg) {
+    for (int i = lines.length-1 ; i > 0  ; i--) {
+      lines[i] = lines [i-1];
+    }
+    lines[0] = msg;
+  }
+}
+public void Jread() {
+  Records = loadJSONArray("data/pcs.json");
+  for (int i = 0 ; i < Records.size() ; i++) {
+    JSONObject record = Records.getJSONObject(i);
+    pcs[i].cellNum = record.getInt("cell");
+    pcs[i].name = record.getString("name");
+    pcs[i].user = record.getString("user");
+    pcs[i].exists = record.getBoolean("exists");
+    cells[pcs[i].cellNum].pcID = i;
+    cells[pcs[i].cellNum].isPc = pcs[i].exists;
+  }
+}
+
+public void Jwrite(int id) {
+  JSONObject record = new JSONObject();
+  record.setInt("cell",pcs[id].cellNum);
+  record.setBoolean("exists",pcs[id].exists);
+  record.setString("name",pcs[id].name);
+  record.setString("user",pcs[id].user);
+  // record.setInt("lastrY",lastReset[0]);
+  // record.setInt("lastrM",lastReset[1]);
+  // record.setInt("lastrD",lastReset[2]);
+  // record.setInt("lastrh",lastReset[3]);
+  // record.setInt("lastrm",lastReset[4]);
+  // record.setInt("lastrs",lastReset[5]);
+  Records.setJSONObject(id, record);
+  saveJSONArray(Records, "/data/PCs.json");
 }
 
 public int timeSec(int[] moment){
@@ -194,11 +264,6 @@ public int timeNow(){
   int t = hour()*3600+minute()*60+second();
   return t;
 }
-
-
-// controls() {
-// }
-
 /* =========================================================
  * ====                   WARNING                        ===
  * =========================================================
@@ -221,38 +286,36 @@ public void exists_checkbox_clicked(GCheckbox source, GEvent event) { //_CODE_:e
 
 public void savebut_click(GButton source, GEvent event) { //_CODE_:savebut:534808:
   if ( selectedCell >= 0){
-    println(selectedCell + " - " + cells[selectedCell].pcID);
-    if (cells[selectedCell].pcID <= 0 && exists_checkbox.isSelected()){
-      for(int i = 0 ; i < pcs.length ; i++ ) {
-        if (!pcs[i].exists){
-          freeID = i;
-          break;
-        }
-      }
+     println(selectedCell + " - " + cells[selectedCell].pcID);
+     if (cells[selectedCell].pcID <= 0 && exists_checkbox.isSelected()){
+       for(int i = 0 ; i < pcs.length ; i++ ) {
+         if (!pcs[i].exists){
+           freeID = i;
+           break;
+         }
+       }
 
-      cells[selectedCell].pcID = freeID;
-      pcs[cells[selectedCell].pcID].cellNum = selectedCell;
-      println(cells[selectedCell].pcID);
-    }
-    pcs[cells[selectedCell].pcID].name = namefield.getText();
-    pcs[cells[selectedCell].pcID].user = userfield.getText();
-    pcs[cells[selectedCell].pcID].exists = cells[selectedCell].isPc = exists_checkbox.isSelected();
-
-  }
-  if (!exists_checkbox.isSelected()) {
-    pcs[cells[selectedCell].pcID].exists = false;
-    pcs[cells[selectedCell].pcID].cellNum = -1;
-    cells[selectedCell].pcID = -1;
-  }
-  cells[selectedCell].selected = false;
-  selectedCell = -1;
-  println("-------------------");
-    for(int i = 0 ; i < pcs.length ; i++ ) {
-      println(pcs[i].cellNum);
-    }
+       cells[selectedCell].pcID = freeID;
+       pcs[cells[selectedCell].pcID].cellNum = selectedCell;
+       println(cells[selectedCell].pcID);
+     }
+     pcs[cells[selectedCell].pcID].name = namefield.getText();
+     pcs[cells[selectedCell].pcID].user = userfield.getText();
+     pcs[cells[selectedCell].pcID].exists = cells[selectedCell].isPc = exists_checkbox.isSelected();
+     Jwrite(cells[selectedCell].pcID);
+   }
+   if (!exists_checkbox.isSelected()) {
+     freeID = cells[selectedCell].pcID;
+     pcs[cells[selectedCell].pcID].exists = false;
+     Jwrite(cells[selectedCell].pcID);
+     pcs[cells[selectedCell].pcID].cellNum = -1;
+     cells[selectedCell].pcID = -1;
+   }
+   cells[selectedCell].selected = false;
+   selectedCell = -1;
 } //_CODE_:savebut:534808:
 
-public void cancelbut_clicked(GButton source, GEvent event) { //_CODE_:cancelbut:774756:
+public void deletebut_clicked(GButton source, GEvent event) { //_CODE_:cancelbut:774756:
 
 } //_CODE_:cancelbut:774756:
 
@@ -265,11 +328,11 @@ public void createGUI(){
   G4P.setGlobalColorScheme(GCScheme.ORANGE_SCHEME);
   G4P.setCursor(ARROW);
   surface.setTitle("Reset Monitor v0.0.2");
-  namefield = new GTextField(this, 30, 30, 140, 30, G4P.SCROLLBARS_NONE);
-  userfield = new GTextField(this, 30, 90, 140, 30, G4P.SCROLLBARS_NONE);
-  exists_checkbox = new GCheckbox(this, 30, 140, 140, 30);
+  namefield = new GTextField(this, 30, 30, 140, 20, G4P.SCROLLBARS_NONE);
+  userfield = new GTextField(this, 30, 70, 140, 20, G4P.SCROLLBARS_NONE);
+  exists_checkbox = new GCheckbox(this, 30, 100, 140, 30);
   savebut = new GButton(this, 30, 820, 60, 30);
-  cancelbut = new GButton(this, 110, 820, 60, 30);
+  deletebut = new GButton(this, 110, 820, 60, 30);
 }
 
 public void setgui(){
@@ -290,10 +353,10 @@ public void setgui(){
   savebut.setTextBold();
   savebut.setLocalColorScheme(GCScheme.ORANGE_SCHEME);
   savebut.addEventHandler(this, "savebut_click");
-  cancelbut.setText("CANCEL");
-  cancelbut.setTextBold();
-  cancelbut.setLocalColorScheme(GCScheme.ORANGE_SCHEME);
-  cancelbut.addEventHandler(this, "cancelbut_clicked");
+  deletebut.setText("DELETE");
+  deletebut.setTextBold();
+  deletebut.setLocalColorScheme(GCScheme.ORANGE_SCHEME);
+  deletebut.addEventHandler(this, "deletebut_clicked");
 }
 
 // Variable declarations
@@ -302,7 +365,7 @@ GTextField namefield;
 GTextField userfield;
 GCheckbox exists_checkbox;
 GButton savebut;
-GButton cancelbut;
+GButton deletebut;
   public void settings() {  size(1400,880); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "monitor" };

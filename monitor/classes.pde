@@ -66,6 +66,13 @@ class Pc {
     else return false;
   }
 
+  void setInfo(String msg) {
+    if (msg.equals("1")) {
+      setLastOn();
+    }
+
+  }
+
   void setLastOn(){
     laston[0] = year();
     laston[1] = month();
@@ -75,7 +82,32 @@ class Pc {
     laston[5] = second();
   }
 
-  void Jwrite() {
+}
 
+class Mqttspy {
+  String[] lines = new String[15];
+  Mqttspy() {
+    for (int i = 0 ; i < lines.length ; i++) {
+      lines[i] = "";
+    }
+  }
+  void show() {
+    fill(255);
+    stroke(0);
+    strokeWeight(3);
+    rect(30,200,140,291);
+    fill(0);
+    textSize(13);
+    textAlign(LEFT);
+    for (int i = 0 ; i< lines.length ; i++) {
+      text(lines[i], 35, 218 + i*19);
+    }
+  }
+
+  void update(String msg) {
+    for (int i = lines.length-1 ; i > 0  ; i--) {
+      lines[i] = lines [i-1];
+    }
+    lines[0] = msg;
   }
 }

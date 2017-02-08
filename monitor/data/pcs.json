@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Art-1",
+    "exists": true,
+    "cell": 300,
+    "user": "Onohin"
+  },
+  {
+    "name": "Art-2",
+    "exists": true,
+    "cell": 270,
+    "user": "Ozdoev"
+  },
+  {
+    "name": "Art-3",
+    "exists": true,
+    "cell": 240,
+    "user": "Indrikson"
+  },
+  {
+    "name": "Art-4",
+    "exists": true,
+    "cell": 210,
+    "user": "Bespalko"
+  },
+  {
+    "name": "Art-37",
+    "exists": true,
+    "cell": 303,
+    "user": "Kaurova"
+  },
+  {
+    "name": "",
+    "exists": true,
+    "cell": 304,
+    "user": ""
+  }
+]

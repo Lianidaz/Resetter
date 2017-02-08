@@ -15,14 +15,41 @@
  */
 
 public void exists_checkbox_clicked(GCheckbox source, GEvent event) { //_CODE_:exists_checkbox:243290:
-  
+
 } //_CODE_:exists_checkbox:243290:
 
 public void savebut_click(GButton source, GEvent event) { //_CODE_:savebut:534808:
+  if ( selectedCell >= 0){
+     println(selectedCell + " - " + cells[selectedCell].pcID);
+     if (cells[selectedCell].pcID <= 0 && exists_checkbox.isSelected()){
+       for(int i = 0 ; i < pcs.length ; i++ ) {
+         if (!pcs[i].exists){
+           freeID = i;
+           break;
+         }
+       }
 
+       cells[selectedCell].pcID = freeID;
+       pcs[cells[selectedCell].pcID].cellNum = selectedCell;
+       println(cells[selectedCell].pcID);
+     }
+     pcs[cells[selectedCell].pcID].name = namefield.getText();
+     pcs[cells[selectedCell].pcID].user = userfield.getText();
+     pcs[cells[selectedCell].pcID].exists = cells[selectedCell].isPc = exists_checkbox.isSelected();
+     Jwrite(cells[selectedCell].pcID);
+   }
+   if (!exists_checkbox.isSelected()) {
+     freeID = cells[selectedCell].pcID;
+     pcs[cells[selectedCell].pcID].exists = false;
+     Jwrite(cells[selectedCell].pcID);
+     pcs[cells[selectedCell].pcID].cellNum = -1;
+     cells[selectedCell].pcID = -1;
+   }
+   cells[selectedCell].selected = false;
+   selectedCell = -1;
 } //_CODE_:savebut:534808:
 
-public void cancelbut_clicked(GButton source, GEvent event) { //_CODE_:cancelbut:774756:
+public void deletebut_clicked(GButton source, GEvent event) { //_CODE_:cancelbut:774756:
 
 } //_CODE_:cancelbut:774756:
 
@@ -35,11 +62,11 @@ public void createGUI(){
   G4P.setGlobalColorScheme(GCScheme.ORANGE_SCHEME);
   G4P.setCursor(ARROW);
   surface.setTitle("Reset Monitor v0.0.2");
-  namefield = new GTextField(this, 30, 30, 140, 30, G4P.SCROLLBARS_NONE);
-  userfield = new GTextField(this, 30, 90, 140, 30, G4P.SCROLLBARS_NONE);
-  exists_checkbox = new GCheckbox(this, 30, 140, 140, 30);
+  namefield = new GTextField(this, 30, 30, 140, 20, G4P.SCROLLBARS_NONE);
+  userfield = new GTextField(this, 30, 70, 140, 20, G4P.SCROLLBARS_NONE);
+  exists_checkbox = new GCheckbox(this, 30, 100, 140, 30);
   savebut = new GButton(this, 30, 820, 60, 30);
-  cancelbut = new GButton(this, 110, 820, 60, 30);
+  deletebut = new GButton(this, 110, 820, 60, 30);
 }
 
 public void setgui(){
@@ -60,10 +87,10 @@ public void setgui(){
   savebut.setTextBold();
   savebut.setLocalColorScheme(GCScheme.ORANGE_SCHEME);
   savebut.addEventHandler(this, "savebut_click");
-  cancelbut.setText("CANCEL");
-  cancelbut.setTextBold();
-  cancelbut.setLocalColorScheme(GCScheme.ORANGE_SCHEME);
-  cancelbut.addEventHandler(this, "cancelbut_clicked");
+  deletebut.setText("DELETE");
+  deletebut.setTextBold();
+  deletebut.setLocalColorScheme(GCScheme.ORANGE_SCHEME);
+  deletebut.addEventHandler(this, "deletebut_clicked");
 }
 
 // Variable declarations
@@ -72,4 +99,4 @@ GTextField namefield;
 GTextField userfield;
 GCheckbox exists_checkbox;
 GButton savebut;
-GButton cancelbut;
+GButton deletebut;

@@ -2,9 +2,9 @@
 import mqtt.*;
 import g4p_controls.*;
 // import controlP5.*;
-JSONObject jayson = new JSONObject(pcs.json);
-JSONArray PCS;
+JSONArray Records;
 
+Mqttspy mqttspy;
 int wid = 40;
 int hei = 80;
 int gridX = 30;
@@ -42,9 +42,9 @@ void setup(){
   }
   createGUI();
   setgui();
-
+  mqttspy = new Mqttspy();
   println("parkSize = " + parkSize + " cells: " + cells.length);
-
+  Jread();
 }
 
 void draw() {
@@ -55,9 +55,11 @@ void draw() {
   for (int i = 0 ; i < cells.length ; i++) {
     cells[i].show();
   }
+  mqttspy.show();
 }
 
 void mousePressed(){
+  Jread();
   if (mouseX>200){
     for (int i = 0 ; i < cells.length ; i++) {
       // println(cells[i].pcID);
@@ -80,13 +82,15 @@ void mousePressed(){
       } else { cells[i].selected = false; }
     }
   }
-  println(selectedCell);
 }
 
 void messageReceived(String topic, byte[] payload) {
+  String mess = new String(payload);
+  mqttspy.update(topic + " : " + mess);
+  println(topic + " : " + mess);
   for (int i = 0 ; i < pcs.length ; i++) {
-    if (pcs[i].name == topic) {
-      pcs[i].setLastOn();
+    if (topic.equals(pcs[i].name)) {
+      pcs[i].setInfo(mess);
     }
   }
 }
