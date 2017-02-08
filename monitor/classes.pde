@@ -1,95 +1,113 @@
-class Workstation {
-  int id;
-  String name, user;
-  float x, y;
-  int i, j;
-  boolean exists, on, selected;
-  int[] lastReset = {0,0,0,0,0,0};   // date Y-M-D h-m-s
-  int[] lastonline = {0,0,0,0,0,0};   // date Y-M-D h-m-s
+class Cell {
+  int num, col, row, pcID;
+  boolean isPc, selected;
 
-
-  Workstation(int _id) {
-    id=_id;
-    if (_id<=9){
-      name="Art-0" + id;
-    } else {
-      name="Art-" + id;
-    }
-    user="none";
-    x=WIDTH*i;
-    y=HEIGHT*j;
-    on = false;
-    selected = false;
-    exists = false;
+  Cell(int _num, int _col, int _row) {
+    num = _num;
+    col = _col;
+    row = _row;
+    isPc = false;
+    int pcID = -1;
   }
-
-  void display(){
-    if (exists) {
-      stroke(0);
-      if (timeNow()-timeSec(lastonline)<=10) {
+  void show() {
+    if (isPc) {
+      if (pcs[pcID].on()){
         fill(8,252,53);
       } else {
         fill(252,12,33);
       }
+      strokeWeight(1);
+      rect(SZ+col*wid+2, row*hei+2, wid-4, hei-4,5,5,5,5);
       pushMatrix();
-      translate(WIDTH*i+WIDTH/2,HEIGHT*j+HEIGHT/2);
-      rect(-WIDTH/2+2,-HEIGHT/2+2,WIDTH-2,HEIGHT-2,5,5,5,5);
-      fill(0);
-      textSize(HEIGHT/4);
-      rotate(-PI/2);
+      translate(SZ+col*wid+wid/2,row*hei+hei/2);
       textAlign(CENTER,CENTER);
-      text(name,0,0);
+      rotate(-PI/2);
+      fill(0);
+      textSize(18);
+      text(pcs[pcID].name,0,0);
       popMatrix();
     }
-    if (selected) {
-      text(name,-150,30);
+    if (mouseover() || selected){
+      if (selected){
+        fill(21,222,222,60);
+        noStroke();
+        rect(SZ+col*wid+2, row*hei+2, wid-4, hei-4,5,5,5,5);
+      } else {
+        fill(21,52,222,60);
+        noStroke();
+        rect(SZ+col*wid+2, row*hei+2, wid-4, hei-4,5,5,5,5);
+      }
     }
   }
+  boolean mouseover() {
+    if (mouseX >= SZ+col*wid+2
+      && mouseX <= SZ+col*wid+wid-4
+      && mouseY >= row*hei+2
+      && mouseY <= row*hei+hei-4) {
+      return true;
+    } else { return false; }
+  }
+}
 
-  void setLastOnline(){
-    lastonline[0] = year();
-    lastonline[1] = month();
-    lastonline[2] = day();
-    lastonline[3] = hour();
-    lastonline[4] = minute();
-    lastonline[5] = second();
+
+class Pc {
+  boolean exists;
+  int cellNum;
+  String name, user;
+  int[] laston = {0,0,0,0,0,0};   // date Y-M-D h-m-s
+  int[] lastReset = {0,0,0,0,0,0};   // date Y-M-D h-m-s
+
+  Pc() {
+    cellNum = -1;
   }
 
-  void readJSON(int a) {
-        JSONObject Pc = Pcs.getJSONObject(a);
-        Pc.getInt("id");
-        name = Pc.getString("name");
-        user = Pc.getString("user");
-        i = Pc.getInt("i");
-        j = Pc.getInt("j");
-        exists = Pc.getBoolean("exists");
-        lastonline[0] = Pc.getInt("lastOnlineY");
-        lastonline[1] = Pc.getInt("lastOnlineM");
-        lastonline[2] = Pc.getInt("lastOnlineD");
-        lastonline[3] = Pc.getInt("lastOnlineh");
-        lastonline[4] = Pc.getInt("lastOnlinem");
-        lastonline[5] = Pc.getInt("lastOnlines");
+  boolean on() {
+    if (timeNow() - timeSec(laston) < 10) return true;
+    else return false;
+  }
+
+  void setInfo(String msg) {
+    if (msg.equals("1")) {
+      setLastOn();
+    }
+
+  }
+
+  void setLastOn(){
+    laston[0] = year();
+    laston[1] = month();
+    laston[2] = day();
+    laston[3] = hour();
+    laston[4] = minute();
+    laston[5] = second();
   }
 
 }
 
-class Cell {
-  int i, j, pcID;
-  boolean mouseover;
-
-  Cell(int _i, int _j) {
-    i = _i;
-    j= _j;
-    mouseover = false;
+class Mqttspy {
+  String[] lines = new String[15];
+  Mqttspy() {
+    for (int i = 0 ; i < lines.length ; i++) {
+      lines[i] = "";
+    }
   }
   void show() {
-    if (mouseover) {
-      fill(21,12,222,60);
-      noStroke();
-      pushMatrix();
-      translate(WIDTH*i+WIDTH/2,HEIGHT*j+HEIGHT/2);
-      rect(-WIDTH/2+2,-HEIGHT/2+2,WIDTH-2,HEIGHT-2,5,5,5,5);
-      popMatrix();
+    fill(255);
+    stroke(0);
+    strokeWeight(3);
+    rect(30,200,140,291);
+    fill(0);
+    textSize(13);
+    textAlign(LEFT);
+    for (int i = 0 ; i< lines.length ; i++) {
+      text(lines[i], 35, 218 + i*19);
     }
+  }
+
+  void update(String msg) {
+    for (int i = lines.length-1 ; i > 0  ; i--) {
+      lines[i] = lines [i-1];
+    }
+    lines[0] = msg;
   }
 }
